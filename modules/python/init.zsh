@@ -87,7 +87,7 @@ fi
 if (( $+VIRTUALENVWRAPPER_VIRTUALENV || $+commands[virtualenv] )) && \
   zstyle -T ':prezto:module:python:virtualenv' initialize ; then
   # Set the directory where virtual environments are stored.
-  export WORKON_HOME="${WORKON_HOME:-$HOME/.virtualenvs}"
+  export WORKON_HOME="$HOME/envs"
 
   # Disable the virtualenv prompt.
   VIRTUAL_ENV_DISABLE_PROMPT=1
