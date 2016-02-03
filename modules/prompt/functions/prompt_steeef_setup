@@ -29,6 +29,15 @@ function prompt_steeef_precmd {
   fi
 }
 
+# Returns "|shashed:N" where N is the number of stashed states (if any).
+function parse_git_stash {
+  local stash=`expr $(git stash list 2>/dev/null| wc -l)`
+  if [ "$stash" != "0" ]
+  then
+    echo "|stashed:$stash"
+  fi
+}
+
 function prompt_steeef_setup {
   setopt LOCAL_OPTIONS
   unsetopt XTRACE KSH_ARRAYS
@@ -85,8 +94,7 @@ function prompt_steeef_setup {
   zstyle ':prezto:module:python:info:virtualenv' format '(%v)'
 
   # Define prompts.
-  PROMPT="
-${_prompt_steeef_colors[3]}%n%f at ${_prompt_steeef_colors[2]}%m%f in ${_prompt_steeef_colors[5]}%~%f "'${vcs_info_msg_0_}'"
+  PROMPT="${_prompt_steeef_colors[3]}%n%f at ${_prompt_steeef_colors[2]}%m%f in ${_prompt_steeef_colors[5]}%~%f "'${vcs_info_msg_0_}'${_prompt_steeef_colors[2]}'$(parse_git_stash)'%f"
 "'$python_info[virtualenv]'"$ "
   RPROMPT=''
 }
