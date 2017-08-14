@@ -1,33 +1,44 @@
-#
-# Executes commands at login pre-zshrc.
-#
-# Authors:
-#   Sorin Ionescu <sorin.ionescu@gmail.com>
-#
+export ZSH_DIR=$HOME/dotfiles/__DOTDIR/zsh
+source $ZSH_DIR/checks.zsh
+
+[[ -z $DISPLAY && $KDG_VTNR -eq 1 ]] && exec startx
 
 #
 # Browser
 #
 
-if [[ "$OSTYPE" == darwin* ]]; then
-  export BROWSER='open'
+export BROWSER="open"
+
+if [[ $IS_LINUX ]]; then
+    if [ -n "$DISPLAY" ]; then
+        BROWSER=chromium
+    else
+        BROWSER=links
+    fi
 fi
 
 #
-# Editors
+# Editor
 #
 
-export EDITOR='vim'
-export VISUAL='vim'
-export PAGER='less'
+export EDITOR="nvim"
+export VISUAL=nvim
+export HGEDITOR='vim'
 
 #
 # Language
 #
 
-if [[ -z "$LANG" ]]; then
-  export LC_ALL=en_US.UTF-8
-  export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+
+#
+# Term
+#
+
+export TERM="xterm-256color"
+if [[ $IS_LINUX ]]; then
+    export TERM=rxvt-unicode
 fi
 
 #
@@ -44,9 +55,16 @@ typeset -gU cdpath fpath mailpath path
 
 # Set the list of directories that Zsh searches for programs.
 path=(
-  /usr/local/{bin,sbin}
-  $path
+	$HOME/.local/bin
+	$HOME/bin
+	$HOME/.gem/ruby/2.0.0/bin
+	$HOME/.rbenv/bin
+	$HOME/gocode/bin
+	$HOME/edm/bin
+	$path
 )
+
+export GOPATH=$HOME/gocode
 
 #
 # Less
@@ -73,3 +91,18 @@ if [[ ! -d "$TMPDIR" ]]; then
 fi
 
 TMPPREFIX="${TMPDIR%/}/zsh"
+
+if [[ ! -d "$TMPPREFIX" ]]; then
+  mkdir -p "$TMPPREFIX"
+fi
+
+#
+# SSH Agent
+#
+
+SSHAGENT=/usr/bin/ssh-agent
+SSHAGENTARGS="-s"
+if [ -z "$SSH_AUTH_SOCK" -a -x "$SSHAGENT" ]; then
+    eval `$SSHAGENT $SSHAGENTARGS`
+    trap "kill $SSH_AGENT_PID" 0
+fi
