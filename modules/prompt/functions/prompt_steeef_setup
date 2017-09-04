@@ -12,19 +12,13 @@
 #   http://i.imgur.com/HyRvv.png
 #
 
-alltracked() {
-  # Stop immediately once an untracked file has been found.
-  return $(git ls-files -o -d --exclude-standard 2> /dev/null | sed q | wc -l)
-}
-
 function prompt_steeef_precmd {
   # Check for untracked files or updated submodules since vcs_info does not.
-  if [[ -n alltracked ]]; then
+  if [[ -n $(git ls-files --other --exclude-standard 2> /dev/null) ]]; then
     branch_format="(${_prompt_steeef_colors[1]}%b%f%u%c${_prompt_steeef_colors[4]}●%f)"
   else
     branch_format="(${_prompt_steeef_colors[1]}%b%f%u%c)"
   fi
-
   zstyle ':vcs_info:*:prompt:*' formats "${branch_format}"
 
   vcs_info 'prompt'
@@ -46,6 +40,7 @@ function parse_git_stash {
 function machine {
   [[ -a ~/.box-name ]] && cat ~/.box-name || hostname|cut -d . -f 3
 }
+
 
 function prompt_steeef_setup {
   setopt LOCAL_OPTIONS
