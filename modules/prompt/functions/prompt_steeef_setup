@@ -54,13 +54,36 @@ function prompt_steeef_setup {
   # Add hook for calling vcs_info before each command.
   add-zsh-hook precmd prompt_steeef_precmd
 
-  _prompt_steeef_colors=(
-    "%F{cyan}"
-    "%F{yellow}"
-    "%F{magenta}"
-    "%F{red}"
-    "%F{green}"
-  )
+  # Alex's colors
+  # _prompt_steeef_colors=(
+  #   "%F{cyan}"
+  #   "%F{yellow}"
+  #   "%F{magenta}"
+  #   "%F{red}"
+  #   "%F{green}"
+  # )
+
+  # Tell prezto we can manage this prompt
+  zstyle ':prezto:module:prompt' managed 'yes'
+
+  # Use extended color pallete if available.
+  if [[ $TERM = *256color* || $TERM = *rxvt* ]]; then
+    _prompt_steeef_colors=(
+      "%F{81}"  # Turquoise
+      "%F{166}" # Orange
+      "%F{135}" # Purple
+      "%F{161}" # Hotpink
+      "%F{118}" # Limegreen
+    )
+  else
+    _prompt_steeef_colors=(
+      "%F{cyan}"
+      "%F{yellow}"
+      "%F{magenta}"
+      "%F{red}"
+      "%F{green}"
+    )
+  fi
 
   # Formats:
   #   %b - branchname
@@ -73,6 +96,9 @@ function prompt_steeef_setup {
   local action_format="(${_prompt_steeef_colors[5]}%a%f)"
   local unstaged_format="${_prompt_steeef_colors[2]}●%f"
   local staged_format="${_prompt_steeef_colors[5]}●%f"
+
+  # Set editor-info parameters.
+  zstyle ':prezto:module:editor:info:keymap:primary' format '$'
 
   # Set vcs_info parameters.
   zstyle ':vcs_info:*' enable bzr git hg svn
@@ -93,4 +119,14 @@ function prompt_steeef_setup {
   RPROMPT=''
 }
 
+function prompt_steeef_preview {
+  local +h PROMPT=''
+  local +h RPROMPT=''
+  local +h SPROMPT=''
+
+  editor-info 2> /dev/null
+  prompt_preview_theme 'steeef'
+}
+
 prompt_steeef_setup "$@"
+# vim: ft=zsh
